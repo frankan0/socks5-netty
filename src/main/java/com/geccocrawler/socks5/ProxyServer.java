@@ -2,6 +2,7 @@ package com.geccocrawler.socks5;
 
 import java.util.Properties;
 
+import com.geccocrawler.socks5.auth.HttpAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +113,7 @@ public class ProxyServer {
 			proxyFlowLog = new ProxyFlowLog4j();
 		}
 		if(passwordAuth == null) {
-			passwordAuth = new PropertiesPasswordAuth();
+			passwordAuth = new HttpAuth();
 		}
 		EventLoopGroup boss = new NioEventLoopGroup(2);
 		EventLoopGroup worker = new NioEventLoopGroup();

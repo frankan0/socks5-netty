@@ -14,6 +14,8 @@ import io.netty.handler.codec.socksx.v5.DefaultSocks5PasswordAuthResponse;
 import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthResponse;
 import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthStatus;
 
+import java.net.InetSocketAddress;
+
 public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandler<DefaultSocks5PasswordAuthRequest> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Socks5PasswordAuthRequestHandler.class);
@@ -26,7 +28,10 @@ public class Socks5PasswordAuthRequestHandler extends SimpleChannelInboundHandle
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5PasswordAuthRequest msg) throws Exception {
-		logger.debug("用户名密码 : " + msg.username() + "," + msg.password());
+
+		InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		String clientIP = insocket.getAddress().getHostAddress();
+		logger.info("用户名:{}  密码:{}  IP:{}",msg.username(), msg.password(),clientIP);
 		if(passwordAuth.auth(msg.username(), msg.password())) {
 			ProxyChannelTrafficShapingHandler.username(ctx, msg.username());
 			Socks5PasswordAuthResponse passwordAuthResponse = new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.SUCCESS);
