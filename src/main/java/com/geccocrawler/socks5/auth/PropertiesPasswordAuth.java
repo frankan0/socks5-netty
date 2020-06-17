@@ -15,7 +15,12 @@ public class PropertiesPasswordAuth implements PasswordAuth {
 			e.printStackTrace();
 		}
 	}
-	
+
+	@Override
+	public void setServerIp(String serverIp) {
+		//do nothing
+	}
+
 	public boolean auth(String user, String password) {
 		String configPasword = properties.getProperty(user);
 		if(configPasword != null) {

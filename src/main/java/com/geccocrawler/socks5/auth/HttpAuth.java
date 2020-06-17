@@ -21,6 +21,7 @@ public class HttpAuth implements PasswordAuth {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpAuth.class);
 
+    private String serverIp;
 
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -28,18 +29,24 @@ public class HttpAuth implements PasswordAuth {
             .getClientInstance();
 
     @Override
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
+    }
+
+    @Override
     public boolean auth(String user, String password) {
         //用户名是token,password是loginDevice
         Map<String,String> data = new HashMap<>();
         data.put("proxyToken","Xs99928@#009kc11");
         data.put("deviceToken",password);
+        data.put("serverIp",this.serverIp);
+        data.put("userId",user);
         //请求体传输json格式的数据
         RequestBody requestBody = RequestBody.create(JSON, com.alibaba.fastjson.JSON.toJSONString(data));
         //创建请求
         Request request = new Request.Builder()
-                .url("http://127.0.0.1:8080/proxy/auth")
+                .url("http://192.168.1.102:8080/proxy/auth")
                 .header("User-Agent", "sock5-proxy")
-                .addHeader("access-token", user)
                 .post(requestBody)
                 .build();
 
@@ -54,6 +61,8 @@ public class HttpAuth implements PasswordAuth {
                 BaseResponse baseResponse = com.alibaba.fastjson.JSON.parseObject(string, BaseResponse.class);
                 if (baseResponse.getCode() == 200){
                     return true;
+                }else {
+                    logger.error("auth failed .user :{} reason:{}",user,baseResponse.getMsg());
                 }
             }
             logger.info("auth failed ,user:{} deviceToken:{}",user,password);

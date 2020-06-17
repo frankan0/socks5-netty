@@ -3,6 +3,7 @@ package com.geccocrawler.socks5;
 import java.util.Properties;
 
 import com.geccocrawler.socks5.auth.HttpAuth;
+import com.geccocrawler.socks5.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,9 @@ public class ProxyServer {
 	private ChannelListener channelListener;
 	
 	private PasswordAuth passwordAuth;
+
+	private String serverIp;
+
 	
 	private ProxyServer(int port) {
 		this.port = port;
@@ -67,7 +71,12 @@ public class ProxyServer {
 		this.auth = auth;
 		return this;
 	}
-	
+
+	public ProxyServer ip(String serverIp) {
+		this.serverIp = serverIp;
+		return this;
+	}
+
 	public ProxyServer logging(boolean logging) {
 		this.logging = logging;
 		return this;
@@ -114,6 +123,7 @@ public class ProxyServer {
 		}
 		if(passwordAuth == null) {
 			passwordAuth = new HttpAuth();
+			passwordAuth.setServerIp(this.serverIp);
 		}
 		EventLoopGroup boss = new NioEventLoopGroup(2);
 		EventLoopGroup worker = new NioEventLoopGroup();
@@ -167,16 +177,23 @@ public class ProxyServer {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		int port = 11080;
+		int port = 29919;
 		boolean auth = false;
+		String serverIp = "";
+		Boolean autoIp = true;
 		Properties properties = new Properties();
 		try {
 			properties.load(ProxyServer.class.getResourceAsStream("/config.properties"));
 			port = Integer.parseInt(properties.getProperty("port"));
 			auth = Boolean.parseBoolean(properties.getProperty("auth"));
+			serverIp = properties.getProperty("serverIp");
+			autoIp = Boolean.parseBoolean(properties.getProperty("autoIp"));
+			if (autoIp){
+				serverIp = IpUtil.getLocalIP();
+			}
 		} catch(Exception e) {
 			logger.warn("load config.properties error, default port 11080, auth false!");
 		}
-		ProxyServer.create(port).logging(true).auth(auth).start();
+		ProxyServer.create(port).logging(true).auth(auth).ip(serverIp).start();
 	}
 }

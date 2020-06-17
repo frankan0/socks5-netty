@@ -2,6 +2,8 @@ package com.geccocrawler.socks5.auth;
 
 public interface PasswordAuth {
 
-	public boolean auth(String user, String password);
+	boolean auth(String user, String password);
+
+	void setServerIp(String serverIp);
 	
 }
