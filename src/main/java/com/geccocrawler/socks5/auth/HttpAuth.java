@@ -45,7 +45,7 @@ public class HttpAuth implements PasswordAuth {
         RequestBody requestBody = RequestBody.create(JSON, com.alibaba.fastjson.JSON.toJSONString(data));
         //创建请求
         Request request = new Request.Builder()
-                .url("http://192.168.1.102:8080/proxy/auth")
+                .url("http://http://shuttle.twg.life/proxy/auth")
                 .header("User-Agent", "sock5-proxy")
                 .post(requestBody)
                 .build();
