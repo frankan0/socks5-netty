@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.geccocrawler.socks5.auth.HttpAuth;
 import com.geccocrawler.socks5.util.IpUtil;
+import com.geccocrawler.socks5.util.NetworkIpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,7 +190,7 @@ public class ProxyServer {
 			serverIp = properties.getProperty("serverIp");
 			autoIp = Boolean.parseBoolean(properties.getProperty("autoIp"));
 			if (autoIp){
-				serverIp = IpUtil.getLocalIP();
+				serverIp = NetworkIpUtil.getSelfPublicIp();
 			}
 		} catch(Exception e) {
 			logger.warn("load config.properties error, default port 11080, auth false!");
